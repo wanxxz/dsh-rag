@@ -1,0 +1,11 @@
+# Local test output and the extracted registry fixture are not source.
+load.log
+test/dshtools/
+test/.lifecycle/
+
+# Runtime state does NOT live here. The plugin's default data root is
+# <dsh-home>/plugins/dsh-rag, so this code directory stays free of databases and
+# secrets. If someone points `dataRoot` at this directory, these two names keep
+# the result out of version control anyway.
+runtime/
+corpus/keys/

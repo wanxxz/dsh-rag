@@ -1,0 +1,41 @@
+{
+  "searchableAttributes": [
+    "title",
+    "section_path",
+    "keywords",
+    "issuer_short",
+    "text"
+  ],
+  "filterableAttributes": [
+    "doc_id",
+    "issuer_short",
+    "doc_type",
+    "publish_year"
+  ],
+  "sortableAttributes": [
+    "publish_date"
+  ],
+  "stopWords": [
+    "的", "了", "是", "在", "和", "与", "及", "或", "对", "为",
+    "等", "中", "上", "下", "这", "那", "有", "也", "就", "都",
+    "而", "并", "以", "被", "把", "所", "之", "其"
+  ],
+  "synonyms": {
+    "光伏": ["太阳能"],
+    "太阳能": ["光伏"]
+  },
+  "typoTolerance": {
+    "enabled": true,
+    "disableOnNumbers": true
+  },
+  "prefixSearch": "disabled",
+  "localizedAttributes": [
+    {
+      "attributePatterns": ["*"],
+      "locales": ["cmn"]
+    }
+  ],
+  "pagination": {
+    "maxTotalHits": 200
+  }
+}

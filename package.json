@@ -1,0 +1,26 @@
+{
+  "name": "@wanxxz/dsh-rag",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DeepSeek Harness 的个人 RAG 插件：在本地 Meilisearch 索引上做混合检索（中文全文 + bge-m3），以 rag_context / rag_search / rag_status 三个 agent 工具、一段提示词、以及一条只读状态路由的形式提供",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "files": [
+    "index.js",
+    "lib/**/*.js",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "license": "MIT"
+}

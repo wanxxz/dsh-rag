@@ -1,0 +1,67 @@
+# @wanxxz/dsh-rag 的 bundle patch。
+#
+# 只插一条 Host 行：个人 RAG 插件。它的 `config` 会被 profile 的
+# cordis.patch.yml 里同 id 的覆盖条目**整体替换**（是替换，不是合并），
+# 所以用户的调参写在 profile 那边。
+#
+# 两个根，刻意分开：
+#
+#   <本插件目录>                        CODE。运行时绝不往里写，所以可以设成
+#                                      只读，也可以被升级整体替换。
+#   <dsh-home>/plugins/@wanxxz/dsh-rag/ DATA（`dataRoot`）。一切必须持久化的
+#                                      东西：Meilisearch 数据库、它的日志、
+#                                      master key、search key。
+#
+# 下面每一个路径，要么是绝对路径，要么是相对 `dataRoot`。
+#
+# `apiKey` 与 `masterKey` 刻意留空：两者都在调用时从文件读取，
+# 所以密钥存在文件里，而不是存在配置里。
+- insert:
+    - id: rag
+      name: '@wanxxz/dsh-rag'
+      config:
+        # 持久化状态的根。默认是 <dsh-home>/plugins/@wanxxz/dsh-rag；
+        # 设成绝对路径可以把数据库放到别的卷上。`DSH_RAG_DATA_ROOT` 同样能覆盖默认值。
+        dataRoot: ''
+        baseUrl: 'http://127.0.0.1:7700'
+        index: 'zh'
+        embedder: 'zh'
+        apiKey: ''
+        apiKeyPath: 'corpus/keys/search-key.txt'
+        defaultLimit: 8
+        maxLimit: 30
+        defaultContextChars: 6000
+        maxContextChars: 40000
+        semanticRatio: 0.5
+        # last | all | frequency —— `last`（Meilisearch 的默认值）会丢掉中文问句末尾的词，
+        # 所以用 `all`。
+        matchingStrategy: 'all'
+        # Meilisearch 的全局 ranking score 是**相对值、不是校准值**：在样本语料上，
+        # 与文档毫无关系的问题也能得约 0.65。0.7 是在那份样本语料上校准出来的，
+        # 目的是让无关问题返回空；设 0 可关闭这个地板，等真实语料灌好之后要重新校准。
+        minScore: 0.7
+        timeoutMs: 15000
+        agentTools: true
+        promptGuidance: true
+        httpPrefix: '/personal-rag'
+        httpRoute: true
+        # ---- Meilisearch 进程归属 -------------------------------------------------
+        # `baseUrl` 上没人监听时，插件启动引擎；已经有实例在跑就**收养**它；
+        # 只停掉自己启动的那个。
+        serviceAutoStart: true
+        # 留空 = 按 PATH / 平台默认位置查找；本机可选设成绝对路径或 DSH_RAG_MEILI_BINARY
+        meilisearchBinary: ''
+        meilisearchDbPath: 'runtime/data'
+        meilisearchLogPath: 'runtime/logs/meili.log'
+        masterKeyPath: 'runtime/master-key.txt'
+        masterKey: ''
+        # Windows 上**不设这个值会出事**：内存涨到 4GB 之后会静默崩溃，且日志里没有任何线索。
+        meilisearchMaxIndexingMemory: '2GB'
+        # 每天做一次快照；不做的话索引就没有任何恢复点。
+        meilisearchScheduleSnapshot: 86400
+        # 冷启动时 bge-m3 的加载要约 50 秒，这段时间里最初的几次查询语义是退化的，
+        # 所以插件在实例就绪后立刻预热 embedder。
+        serviceWarmup: true
+        serviceWarmupTimeoutMs: 600000
+        serviceStartTimeoutMs: 120000
+        servicePollIntervalMs: 1000

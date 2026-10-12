@@ -1,0 +1,11 @@
+# Keep deliberate in-file encodings intact.
+#
+# The `.ps1` scripts carry a UTF-8 BOM on purpose: Windows PowerShell 5.1 reads a
+# BOM-less UTF-8 script as ANSI, and these files contain Chinese comments, so the
+# script fails to parse *silently* — no log, no error. Git's line-ending
+# normalization must not touch them, and the sample documents are binary for the
+# same reason.
+*.ps1 -text
+*.cmd -text
+*.pdf binary
+*.docx binary

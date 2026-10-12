@@ -1,0 +1,41 @@
+# 一次性探测用的 patch，只为验证 @wanxxz/dsh-rag 能组合进一个真实 profile、
+# 且它的 config 能被解析。**从不真正安装**：web profile 是管理型 bundle，
+# 不可编辑，所以没有别的东西能覆盖它。
+#
+# 它刻意把 bundle 自己的默认值重复一遍（见 ../../cordis.patch.yml），这样即使
+# bundle 自己的 patch 被改坏、而实际安装的配置有问题，这个探测也不会"悄悄通过"。
+# 改动其中一个时，记得同步另一个。
+- insert:
+    - id: rag
+      name: '@wanxxz/dsh-rag'
+      config:
+        dataRoot: ''
+        baseUrl: 'http://127.0.0.1:7700'
+        index: 'zh'
+        embedder: 'zh'
+        apiKey: ''
+        apiKeyPath: 'corpus/keys/search-key.txt'
+        defaultLimit: 8
+        maxLimit: 30
+        defaultContextChars: 6000
+        maxContextChars: 40000
+        semanticRatio: 0.5
+        matchingStrategy: 'all'
+        minScore: 0.7
+        timeoutMs: 15000
+        agentTools: true
+        promptGuidance: true
+        httpPrefix: '/personal-rag'
+        httpRoute: true
+        serviceAutoStart: true
+        meilisearchBinary: ''
+        meilisearchDbPath: 'runtime/data'
+        meilisearchLogPath: 'runtime/logs/meili.log'
+        masterKeyPath: 'runtime/master-key.txt'
+        masterKey: ''
+        meilisearchMaxIndexingMemory: '2GB'
+        meilisearchScheduleSnapshot: 86400
+        serviceWarmup: true
+        serviceWarmupTimeoutMs: 600000
+        serviceStartTimeoutMs: 120000
+        servicePollIntervalMs: 1000

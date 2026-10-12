@@ -1,0 +1,1 @@
+{"zh":{"source":"huggingFace","model":"BAAI/bge-m3","pooling":"forceCls","documentTemplate":"{{doc.title}}\n{{doc.section_path}}\n{{doc.text}}","documentTemplateMaxBytes":2048}}

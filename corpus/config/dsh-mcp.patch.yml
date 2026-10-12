@@ -1,0 +1,38 @@
+# 追加到 <dsh-home>/profiles/<profile>/cordis.patch.yml
+#
+# ⚠️ 这是**模板**，不是可直接使用的工作配置：下面的 key 是占位符。
+# 真实 key 存在数据根里（默认 <dsh-home>/plugins/@wanxxz/dsh-rag/corpus/keys/search-key.txt），
+# 由插件在调用时读取；本文件不应包含任何真实凭据（它是会被提交/分享的）。
+#
+# ⚠️ 关键：cordis.patch.yml 是「patch 层」，条目语义是**按 id 定位已有条目**做覆盖/禁用。
+# 直接写一个带新 id 的裸条目（- id: xxx / name: yyy）会被判为 unknown target，
+# **警告并跳过**——MCP 服务器根本不会加载，而且不报错，很容易以为配好了。
+# 要**新增**插件条目必须用 insert 形式（insert 的值是 entry 列表）。
+# 依据是 `dsh --dump-config-schema` 里 `$defs.includePatch` 的描述
+# （`@deepseek-ai/dsh-app-boot` 的 `patchStructure()`）。原文：
+#   "An insert appends entries, optionally inside the group identified by id.
+#    Other patches replace supplied fields; config is replaced wholesale, not
+#    deep-merged. A truthy name asserts the existing plugin name rather than
+#    renaming it. Unknown targets and non-insert patches without a nonempty id
+#    are warned and skipped."
+# 中文对照：`insert` 追加条目，可指定放进 id 标识的分组内。其他 patch 覆盖所给字段；
+# **`config` 是整体替换而不是深合并**。`name` 若为真值，是用来**断言**既有插件名而不是
+# 改名。**目标不存在、以及没有非空 id 的非 insert patch，都会被警告并跳过。**
+#
+# ⚠️ 这条 MCP 行**不管引擎进程**：它假定 7700 上已经有实例在跑。引擎现在由
+# dsh-rag 插件随 DSH 启停，所以 MCP 行的可用性取决于 DSH 是否开着。
+# 如果你的用法是「不开 DSH 也要能查」，就别依赖这条，改用插件或手动 `node corpus/cli.js start`。
+#
+# 用法：把下面的 <search-key> 换成检索 key 的值（需要 search + indexes.get 权限；
+# 插件的自检还会用 settings.get）。key 在 Meilisearch 里由 master key 管理。
+
+- insert:
+    - id: mcp-meili
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: meili
+        transport: streamable-http
+        url: http://127.0.0.1:7700/mcp
+        headers:
+          Authorization: Bearer <search-key>
+        toolCallTimeoutMs: 30000
